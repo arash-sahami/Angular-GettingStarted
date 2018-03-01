@@ -3,7 +3,7 @@ import { IProduct } from "./product"
 import { ProductService } from "./product.service";
 
 @Component({
-  selector: 'pm-products',
+  //selector: 'pm-products',    //Component nesting 
   templateUrl: './product-list.component.html',
   styleUrls:  ['./product-list.component.less']
 })
@@ -15,6 +15,7 @@ export class ProductListComponent implements OnInit {
   imageMargin: number = 2;
   _listFilter: string;
   showImage: boolean = false;
+  _products: IProduct[];
 
   filteredProducts: IProduct[];
 
@@ -28,7 +29,11 @@ export class ProductListComponent implements OnInit {
   }
 
   get products(): IProduct[] {
-    return this._productService.getProducts();
+    return this._products;
+  }
+
+  set products(arg: IProduct[]) {
+    this._products = arg;
   }
 
   constructor(private _productService : ProductService) {
@@ -41,7 +46,10 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("In OnInit");
+    this._productService.getProducts().subscribe(products => {
+      this.products = products
+      this.filteredProducts = this.products;
+    }, error => alert(error));
   }
 
   performFilter(filterBy: string): any {
